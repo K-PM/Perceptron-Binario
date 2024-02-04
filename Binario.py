@@ -7,8 +7,10 @@ import tkinter as tk
 def inicializar_pesos(num_features):
     #Semilla que se encarga que se inicialice con el mismo 
     #np.random.seed(0)
-    return np.random.rand(num_features + 1)  # Retorna pesos aleatorios
-
+    #return np.random.rand(num_features + 1)  # Retorna pesos aleatorios incluyendo el pesos del sesgo
+    pesos = np.random.rand(num_features + 1)  # Inicializa todos los pesos a cero
+    pesos[0] = 1 
+    return pesos
 # Función para agregar sesgo a X
 def agregar_sesgo(X):
     return np.insert(X, 0, 1, axis=1)  # Inserta una columna de unos al principio de X (sesgo)
@@ -21,6 +23,7 @@ def escalon(z):
 def entrenar_neurona(X, Yd, pesos, tasa_aprendizaje, tolerancia_error, iteraciones):
     errores = []  # Lista para almacenar las normas de los errores en cada época
     pesos_evolution = []  # Lista para almacenar la evolución de los pesos en cada época
+    print(pesos)
     epoca=0
     # Ciclo de entrenamiento generacion < self.limiteGeneraciones   
     while epoca < int(iteraciones):
@@ -52,36 +55,6 @@ def entrenar_neurona(X, Yd, pesos, tasa_aprendizaje, tolerancia_error, iteracion
         
     return pesos, errores, pesos_evolution
 
-# Función para graficar la norma de los errores en cada época
-def graficar_errores(errores):
-    # Graficar la norma de los errores en cada época
-    plt.plot(range(len(errores)), errores)
-    plt.title("Norma de los Errores en Cada Época")
-    plt.xlabel("Época")
-    plt.ylabel("Norma del Error")
-    plt.show()
-
-# Función para graficar la evolución de los pesos a lo largo de todas las épocas
-def graficar_pesos_evolution(pesos_evolution):
-    pesos_evolution = np.array(pesos_evolution)
-    for i in range(pesos_evolution.shape[1]):
-        plt.plot(range(pesos_evolution.shape[0]), pesos_evolution[:, i], label=f'Peso {i+1}')
-    plt.title("Evolución de los Pesos a lo largo de Todas las Épocas")
-    plt.xlabel("Época")
-    plt.ylabel("Valor del Peso")
-    plt.legend()
-    plt.show()
-
-# Método alternativo para cargar datos desde un archivo CSV sin encabezados
-def cargar_datos_desde_csv(ruta_csv):
-    # Cargar datos desde el archivo CSV
-    datos = np.genfromtxt(ruta_csv, delimiter=',')
-    # Obtener características de entrada (todas las columnas excepto la última)
-    X = datos[:, :-1]
-    # Obtener la salida deseada (última columna)
-    Yd = datos[:, -1]
-    return X, Yd
-
 
 def ingresarDatos(ruta_csv, tasa_aprendizaje, resultados_texto, iteraciones):
     # Cargar datos desde el archivo CSV
@@ -109,4 +82,35 @@ def ingresarDatos(ruta_csv, tasa_aprendizaje, resultados_texto, iteraciones):
     resultados_texto.insert(tk.END, "\nTasa de aprendizaje utilizada: " + str(tasa_aprendizaje) + "\n")
     resultados_texto.insert(tk.END, "Error permisible: " + str(tolerancia_error) + "\n")
     resultados_texto.insert(tk.END, "Cantidad de iteraciones: " + str(len(errores)) + "\n")
+
+
+def graficar_errores(errores):    
+    plt.plot(range(len(errores)), errores)
+    plt.title("Norma de los Errores")
+    plt.xlabel("Época")
+    plt.ylabel("Norma del Error")
+    plt.show()
+
+# Función para graficar la evolución de los pesos
+def graficar_pesos_evolution(pesos_evolution):
+    pesos_evolution = np.array(pesos_evolution)
+    for i in range(pesos_evolution.shape[1]):
+        plt.plot(range(pesos_evolution.shape[0]), pesos_evolution[:, i], label=f'Peso {i+1}')
+    plt.title("Evolución de los Pesos a lo largo de Todas las Épocas")
+    plt.xlabel("Época")
+    plt.ylabel("Valor del Peso")
+    plt.legend()
+    plt.show()
+
+# Método alternativo para cargar datos desde un archivo CSV sin encabezados
+def cargar_datos_desde_csv(ruta_csv):
+    # Cargar datos desde el archivo CSV
+    datos = np.genfromtxt(ruta_csv, delimiter=',')
+    # Obtener características de entrada (todas las columnas excepto la última)
+    X = datos[:, :-1]
+    # Obtener la salida deseada (última columna)
+    Yd = datos[:, -1]
+    return X, Yd
+
+
 
